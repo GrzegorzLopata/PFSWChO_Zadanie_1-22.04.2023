@@ -1,0 +1,20 @@
+# Pobranie oficjalnego obrazu Pythona z wersją 3.9 jako bazowego obrazu
+FROM python:3.9
+
+# Dodanie informacji o autorze pliku
+LABEL author="Grzegorz Łopata"
+
+# Utworzenie i ustawienie katalogu roboczego
+WORKDIR /app
+
+# Skopiowanie pliku z kodem Pythona do katalogu roboczego w obrazie
+COPY serwer.py /app/
+
+# Wykonanie polecenia instalującego potrzebne pakiety
+RUN pip install --no-cache-dir socket datetime
+
+# Zdefiniowanie zmiennej środowiskowej dla portu
+ENV PORT=12345
+
+# Zdefiniowanie polecenia startowego
+CMD ["python", "serwer.py"]

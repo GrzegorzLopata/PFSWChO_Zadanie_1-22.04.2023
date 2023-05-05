@@ -1,0 +1,37 @@
+FROM --platform=linux/arm/v7,linux/arm64/v8,linux/amd64 python:3.9-slim-buster AS base
+
+LABEL author="Grzegorz Łopata"
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+ENV HOST=0.0.0.0
+ENV PORT=12345
+
+# Obraz dla architektury linux/arm/v7
+FROM base AS armv7
+ENV PYTHONUNBUFFERED=1
+ENV PIP_NO_CACHE_DIR=off
+COPY --from=base /app/serwer.py /app/
+CMD ["python", "serwer.py"]
+
+# Obraz dla architektury linux/arm64/v8
+FROM base AS arm64v8
+ENV PYTHONUNBUFFERED=1
+ENV PIP_NO_CACHE_DIR=off
+COPY --from=base /app/serwer.py /app/
+CMD ["python", "serwer.py"]
+
+# Obraz dla architektury linux/amd64
+FROM base AS amd64
+ENV PYTHONUNBUFFERED=1
+ENV PIP_NO_CACHE_DIR=off
+COPY --from=base /app/serwer.py /app/
+CMD ["python", "serwer.py"]
+
+# Zbudowanie kontenera
+# docker buildx create --name mybuilder --use
+# docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 --push -t nazwa_użytkownika/nazwa_obrazu:latest .
